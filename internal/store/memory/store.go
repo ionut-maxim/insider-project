@@ -19,7 +19,7 @@ func New() *Store {
 	}
 }
 
-func (s *Store) Sent(_ context.Context) ([]project.Message, error) {
+func (s *Store) Sent(_ context.Context, _, _ int) ([]project.Message, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -34,7 +34,7 @@ func (s *Store) Sent(_ context.Context) ([]project.Message, error) {
 	return messages, nil
 }
 
-func (s *Store) Unsent(_ context.Context) ([]project.Message, error) {
+func (s *Store) Next(_ context.Context) ([]project.Message, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -60,7 +60,7 @@ func (s *Store) Unsent(_ context.Context) ([]project.Message, error) {
 
 func (s *Store) Add(_ context.Context, req project.AddMessageRequest) error {
 	s.mu.Lock()
-	id := uint64(len(s.messages) + 1)
+	id := uint32(len(s.messages) + 1)
 	message := project.Message{
 		ID:        id,
 		To:        req.To,
@@ -75,7 +75,7 @@ func (s *Store) Add(_ context.Context, req project.AddMessageRequest) error {
 	return nil
 }
 
-func (s *Store) Update(_ context.Context, id uint64, status project.Status) error {
+func (s *Store) Update(_ context.Context, id uint32, status project.Status) error {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 

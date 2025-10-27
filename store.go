@@ -13,10 +13,11 @@ const (
 )
 
 type Message struct {
-	ID        uint64    `json:"id"`
-	To        string    `json:"to"`
-	Content   string    `json:"content"`
-	Status    Status    `json:"status"`
+	ID      uint32 `json:"id"`
+	To      string `json:"to"`
+	Content string `json:"content"`
+	Status  Status `json:"status"`
+
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -27,15 +28,15 @@ type AddMessageRequest struct {
 }
 
 type MessageStore interface {
-	// Sent retrieves all sent messages from MessageStore
-	Sent(ctx context.Context) ([]Message, error)
+	// Sent retrieves sent messages from the store
+	Sent(ctx context.Context, limit, offset int) ([]Message, error)
 
-	// Unsent retrieves next two messages that should be sent
-	Unsent(ctx context.Context) ([]Message, error)
+	// Next retrieves the next 2 messages to be sent
+	Next(ctx context.Context) ([]Message, error)
 
 	// Add adds a new message to the store
 	Add(ctx context.Context, req AddMessageRequest) error
 
 	// Update will set the status on a Message
-	Update(ctx context.Context, id uint64, status Status) error
+	Update(ctx context.Context, id uint32, status Status) error
 }

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	project "github.com/ionut-maxim/insider-project"
-	"github.com/ionut-maxim/insider-project/store/memory"
+	"github.com/ionut-maxim/insider-project/internal/store/memory"
 )
 
 func Test_MemoryStore(t *testing.T) {
@@ -24,12 +24,12 @@ func Test_MemoryStore(t *testing.T) {
 	}
 
 	for i := range 5 {
-		if err := s.Update(ctx, uint64(i+1), project.StatusSent); err != nil {
+		if err := s.Update(ctx, i+1, project.StatusSent); err != nil {
 			t.Error(err)
 		}
 	}
 
-	sent, err := s.Sent(ctx)
+	sent, err := s.Sent(ctx, 0, 0)
 	if err != nil {
 		t.Error(err)
 	}
@@ -37,11 +37,11 @@ func Test_MemoryStore(t *testing.T) {
 		t.Errorf("Sent count mismatch: got %d, want %d", len(sent), 5)
 	}
 
-	unsent, err := s.Unsent(ctx)
+	next, err := s.Next(ctx)
 	if err != nil {
 		t.Error(err)
 	}
-	if unsent[0].ID != 6 {
-		t.Errorf("Unsent id mismatch: got %d, want %d", unsent[0].ID, 6)
+	if next[0].ID != 6 {
+		t.Errorf("Unsent id mismatch: got %d, want %d", next[0].ID, 6)
 	}
 }

@@ -82,14 +82,14 @@ func (w *Worker) Stop() error {
 }
 
 func (w *Worker) start(ctx context.Context) {
-	if err := w.fetchAndSend(ctx); err != nil {
+	if err := w.processMessages(ctx); err != nil {
 		w.logger.Error("Failed to fetch and send messages", "details", err)
 	}
 
 	for {
 		select {
 		case <-w.ticker.C:
-			if err := w.fetchAndSend(ctx); err != nil {
+			if err := w.processMessages(ctx); err != nil {
 				w.logger.Error("Failed to fetch and send messages", "details", err)
 			}
 		case <-w.stop:
@@ -105,8 +105,8 @@ func (w *Worker) start(ctx context.Context) {
 	}
 }
 
-func (w *Worker) fetchAndSend(ctx context.Context) error {
-	messages, err := w.store.Unsent(ctx)
+func (w *Worker) processMessages(ctx context.Context) error {
+	messages, err := w.store.Next(ctx)
 	if err != nil {
 		return ErrUnableToFetchMessages
 	}
