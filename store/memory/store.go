@@ -34,11 +34,11 @@ func (s *Store) Sent(_ context.Context) ([]project.Message, error) {
 	return messages, nil
 }
 
-func (s *Store) Unsent(_ context.Context) ([2]project.Message, error) {
+func (s *Store) Unsent(_ context.Context) ([]project.Message, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
-	messages := [2]project.Message{}
+	var messages []project.Message
 	count := 0
 
 	for _, m := range s.messages {
@@ -46,7 +46,7 @@ func (s *Store) Unsent(_ context.Context) ([2]project.Message, error) {
 			continue
 		}
 
-		messages[count] = m
+		messages = append(messages, m)
 		count++
 
 		if count == 2 {

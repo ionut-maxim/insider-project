@@ -17,8 +17,8 @@ type Message struct {
 	To        string    `json:"to"`
 	Content   string    `json:"content"`
 	Status    Status    `json:"status"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type AddMessageRequest struct {
@@ -31,7 +31,7 @@ type MessageStore interface {
 	Sent(ctx context.Context) ([]Message, error)
 
 	// Unsent retrieves next two messages that should be sent
-	Unsent(ctx context.Context) ([2]Message, error)
+	Unsent(ctx context.Context) ([]Message, error)
 
 	// Add adds a new message to the store
 	Add(ctx context.Context, req AddMessageRequest) error
