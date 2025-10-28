@@ -23,8 +23,9 @@ func WithTTL(ttl time.Duration) Options {
 
 func New(url string, db int, options ...Options) *Cache {
 	client := redis.NewClient(&redis.Options{
-		Addr: url,
-		DB:   db,
+		Addr:            url,
+		DB:              db,
+		DisableIdentity: true,
 	})
 
 	c := &Cache{
