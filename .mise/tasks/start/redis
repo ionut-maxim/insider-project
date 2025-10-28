@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+#MISE description="Starts a redis docker container for the response cache."
+docker start "notifications-cache"  || \
+docker run --name "notifications-cache" \
+  -p 6379:6379 \
+  -d redis

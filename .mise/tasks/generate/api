@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+#MISE description="Generates the `api` server code from the typespec project"
+#MISE sources=["openapi/main.tsp"]
+#MISE outputs=["openapi/openapi.yaml"]
+
+tsp compile openapi
+
+oapi-codegen -config openapi/codegen.yaml openapi/openapi.yaml

@@ -19,6 +19,10 @@ func New() *Store {
 	}
 }
 
+func (s *Store) Close() error {
+	return nil
+}
+
 func (s *Store) Sent(_ context.Context, _, _ int) ([]project.Message, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()

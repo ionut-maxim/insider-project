@@ -1,0 +1,2 @@
+#MISE description="Runs all code generation tasks"
+#MISE depends=["generate:api"]

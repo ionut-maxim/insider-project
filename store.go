@@ -2,6 +2,7 @@ package insider_project
 
 import (
 	"context"
+	"io"
 	"time"
 )
 
@@ -39,4 +40,6 @@ type MessageStore interface {
 
 	// Update will set the status on a Message
 	Update(ctx context.Context, id uint32, status Status) error
+
+	io.Closer
 }

@@ -67,7 +67,7 @@ func (w *Worker) Start(ctx context.Context) error {
 	return nil
 }
 
-func (w *Worker) Stop() error {
+func (w *Worker) Close() error {
 	w.mu.Lock()
 	defer w.mu.Unlock()
 

@@ -32,6 +32,11 @@ func New(uri string, logger *slog.Logger) (*Store, error) {
 	return &Store{pool: pool, logger: logger.With("service", "store")}, nil
 }
 
+func (s *Store) Close() error {
+	s.pool.Close()
+	return nil
+}
+
 func (s *Store) Sent(ctx context.Context, limit, offset int) ([]project.Message, error) {
 	query := `
         SELECT id, to_recipient, content, status, created_at, updated_at

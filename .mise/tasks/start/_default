@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -e
+
+#MISE description="Starts the server. If used with -d starts only dependencies"
+#MISE depends=["start:db", "start:redis"]
+#USAGE flag "-d --dependencies" help="Start only service dependencies."
+
+go run ./cmd/server/
+

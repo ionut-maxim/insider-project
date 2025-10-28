@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/ionut-maxim/insider-project/worker"
+	"github.com/ionut-maxim/insider-project/internal/worker"
 )
 
 type Notifier struct {

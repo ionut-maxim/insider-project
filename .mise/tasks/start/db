@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+#MISE description="Starts a postgres docker container for the backend database."
+docker start "notifications-db"  || \
+docker run --name "notifications-db" \
+    -e POSTGRES_PASSWORD="${APP_DB_PASSWORD}" \
+    -e POSTGRES_USER="${APP_DB_USERNAME}" \
+    -e POSTGRES_DB="${APP_DB_NAME}" \
+    -p "${APP_DB_PORT}":5432 \
+    -d postgres:18.0-alpine
+  

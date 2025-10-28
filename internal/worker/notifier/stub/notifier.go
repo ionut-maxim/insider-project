@@ -5,7 +5,7 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/ionut-maxim/insider-project/worker"
+	"github.com/ionut-maxim/insider-project/internal/worker"
 )
 
 type Notifier struct {
