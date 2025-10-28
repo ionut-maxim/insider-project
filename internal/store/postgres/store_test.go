@@ -6,28 +6,29 @@ import (
 	"os"
 	"testing"
 
+	"github.com/testcontainers/testcontainers-go/modules/postgres"
+
 	project "github.com/ionut-maxim/insider-project"
 )
 
 func Test_Store(t *testing.T) {
 	ctx := context.Background()
 
-	//postgresContainer, err := postgres.Run(context.Background(),
-	//	"postgres:18-alpine",
-	//	postgres.WithDatabase("backend"),
-	//	postgres.WithUsername("postgres"),
-	//	postgres.WithPassword("postgres"),
-	//)
-	//if err != nil {
-	//	t.Fatal(err)
-	//}
-	//defer postgresContainer.Terminate(ctx)
-	//
-	//url, err := postgresContainer.ConnectionString(ctx, "sslmode=disable")
-	//if err != nil {
-	//	t.Fatal(err)
-	//}
-	url := "postgres://postgres:postgres@backend.orb.local/postgres?sslmode=disable"
+	postgresContainer, err := postgres.Run(context.Background(),
+		"postgres:18-alpine",
+		postgres.WithDatabase("backend"),
+		postgres.WithUsername("postgres"),
+		postgres.WithPassword("postgres"),
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer postgresContainer.Terminate(ctx)
+
+	url, err := postgresContainer.ConnectionString(ctx, "sslmode=disable")
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelDebug}))
 	s, err := New(url, logger)
