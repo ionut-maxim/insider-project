@@ -3,4 +3,4 @@
 docker start "notifications-cache"  || \
 docker run --name "notifications-cache" \
   -p 6379:6379 \
-  -d redis
+  -d redis:8.2

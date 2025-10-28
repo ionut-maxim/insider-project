@@ -2,14 +2,18 @@ package main
 
 import (
 	"fmt"
+	"log/slog"
 	"net/url"
+	"time"
 )
 
 type config struct {
-	Database   Database `envPrefix:"DB_"`
-	Cache      Cache    `envPrefix:"CACHE_"`
-	WebhookURL string   `env:"WEBHOOK_URL"`
-	ServerPort int      `env:"SERVER_PORT"`
+	Database     Database      `envPrefix:"DB_"`
+	Cache        Cache         `envPrefix:"CACHE_"`
+	WebhookURL   string        `env:"WEBHOOK_URL"`
+	ServerPort   int           `env:"SERVER_PORT"`
+	LogLevel     slog.Level    `env:"LOG_LEVEL"`
+	PollInterval time.Duration `env:"POLL_INTERVAL"`
 }
 type Database struct {
 	Host     string `env:"HOST"`
@@ -35,6 +39,12 @@ func (d Database) ConnectionString() string {
 }
 
 type Cache struct {
-	Host string `env:"HOST"`
-	Port string `env:"PORT"`
+	Host     string        `env:"HOST"`
+	Port     int           `env:"PORT"`
+	Database int           `env:"DB"`
+	TTL      time.Duration `env:"TTL"`
+}
+
+func (c Cache) ConnectionString() string {
+	return fmt.Sprintf("%s:%d", c.Host, c.Port)
 }
