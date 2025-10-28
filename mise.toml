@@ -1,7 +1,11 @@
 [env]
 _.file = '.env'
+
 [tools]
 go = "1.25"
 "go:github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen" = "latest"
 node = "latest"
 "npm:@typespec/compiler" = "latest"
+
+[hooks]
+postinstall = "npm install"
