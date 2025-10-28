@@ -26,7 +26,16 @@ func newService(store project.MessageStore, worker *worker.Worker) *service {
 func (s *service) MessagesSent(ctx context.Context, request MessagesSentRequestObject) (MessagesSentResponseObject, error) {
 	var result []Message
 
-	messages, err := s.store.Sent(ctx, request.Params.Limit, request.Params.Offset)
+	if request.Params.Limit == nil {
+		v := 10
+		request.Params.Limit = &v
+	}
+	if request.Params.Offset == nil {
+		v := 0
+		request.Params.Offset = &v
+	}
+
+	messages, err := s.store.Sent(ctx, *request.Params.Limit, *request.Params.Offset)
 	if err != nil {
 		return nil, err
 	}

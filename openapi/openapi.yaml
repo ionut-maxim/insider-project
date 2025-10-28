@@ -9,16 +9,18 @@ paths:
   /messages:
     get:
       operationId: Messages_sent
+      summary: Gets all the sent messages
       parameters:
         - name: limit
           in: query
-          required: true
+          required: false
           schema:
             type: integer
+            default: 10
           explode: false
         - name: offset
           in: query
-          required: true
+          required: false
           schema:
             type: integer
           explode: false
@@ -41,6 +43,7 @@ paths:
         - Messages
     post:
       operationId: Messages_add
+      summary: Add a new message. This was added for testing purposes.
       parameters: []
       responses:
         '201':
@@ -114,7 +117,6 @@ components:
         - id
         - to
         - content
-        - status
         - createdAt
         - updatedAt
       properties:
@@ -127,11 +129,9 @@ components:
           example: '+40700000000'
         content:
           type: string
+          maxLength: 400
           title: Message content
           example: How are you on this beautiful day?
-        status:
-          type: string
-          readOnly: true
         createdAt:
           type: string
           format: date-time
