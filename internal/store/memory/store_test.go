@@ -24,7 +24,7 @@ func Test_MemoryStore(t *testing.T) {
 	}
 
 	for i := range 5 {
-		if err := s.Update(ctx, i+1, project.StatusSent); err != nil {
+		if err := s.Update(ctx, uint32(i+1), project.StatusSent); err != nil {
 			t.Error(err)
 		}
 	}
@@ -37,7 +37,7 @@ func Test_MemoryStore(t *testing.T) {
 		t.Errorf("Sent count mismatch: got %d, want %d", len(sent), 5)
 	}
 
-	next, err := s.Next(ctx)
+	next, err := s.Next(ctx, 0)
 	if err != nil {
 		t.Error(err)
 	}

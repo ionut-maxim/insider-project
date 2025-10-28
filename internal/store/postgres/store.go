@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -12,21 +13,23 @@ import (
 )
 
 type Store struct {
-	pool *pgxpool.Pool
+	pool   *pgxpool.Pool
+	logger *slog.Logger
 }
 
-func New(uri string) (*Store, error) {
-	// TODO: Handle migrations and proper error handling
-	pool, err := pgxpool.New(context.TODO(), uri)
+func New(uri string, logger *slog.Logger) (*Store, error) {
+	dbCtx := context.Background()
+	pool, err := pgxpool.New(dbCtx, uri)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = applyMigrations(); err != nil {
+	mLogger := logger.With("service", "migrations")
+	if err = applyMigrations(dbCtx, pool, mLogger); err != nil {
 		return nil, errors.New("failed to apply postgres migrations")
 	}
 
-	return &Store{pool: pool}, nil
+	return &Store{pool: pool, logger: logger.With("service", "store")}, nil
 }
 
 func (s *Store) Sent(ctx context.Context, limit, offset int) ([]project.Message, error) {
@@ -54,7 +57,7 @@ func (s *Store) Sent(ctx context.Context, limit, offset int) ([]project.Message,
 	return messages, nil
 }
 
-func (s *Store) Next(ctx context.Context) ([]project.Message, error) {
+func (s *Store) Next(ctx context.Context, limit int) ([]project.Message, error) {
 	// Little comment here for running multiple workers:
 	// FOR UPDATE locks the two rows we're querying - fixes concurrency issues
 	// SKIP LOCKED continues over the skipped rows and selects the next 2 in the result set
@@ -63,11 +66,11 @@ func (s *Store) Next(ctx context.Context) ([]project.Message, error) {
 			FROM messages
 			WHERE status = 0
 			ORDER BY created_at
-			LIMIT 2
+			LIMIT $1
 			FOR UPDATE SKIP LOCKED
 		`
 
-	rows, err := s.pool.Query(ctx, query)
+	rows, err := s.pool.Query(ctx, query, limit)
 	if err != nil {
 		return nil, err
 	}

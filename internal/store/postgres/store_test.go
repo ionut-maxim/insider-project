@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"context"
+	"log/slog"
+	"os"
 	"testing"
 
 	project "github.com/ionut-maxim/insider-project"
@@ -10,10 +12,25 @@ import (
 func Test_Store(t *testing.T) {
 	ctx := context.Background()
 
-	// TODO: Add postgres test container
-	url := "postgres://postgres:postgres@backend.orb.local:5432/backend?sslmode=disable"
+	//postgresContainer, err := postgres.Run(context.Background(),
+	//	"postgres:18-alpine",
+	//	postgres.WithDatabase("backend"),
+	//	postgres.WithUsername("postgres"),
+	//	postgres.WithPassword("postgres"),
+	//)
+	//if err != nil {
+	//	t.Fatal(err)
+	//}
+	//defer postgresContainer.Terminate(ctx)
+	//
+	//url, err := postgresContainer.ConnectionString(ctx, "sslmode=disable")
+	//if err != nil {
+	//	t.Fatal(err)
+	//}
+	url := "postgres://postgres:postgres@backend.orb.local/postgres?sslmode=disable"
 
-	s, err := New(url)
+	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelDebug}))
+	s, err := New(url, logger)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -24,7 +41,7 @@ func Test_Store(t *testing.T) {
 		}
 	}
 
-	next, err := s.Next(ctx)
+	next, err := s.Next(ctx, 2)
 	if err != nil {
 		t.Fatal(err)
 	}

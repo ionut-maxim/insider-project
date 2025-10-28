@@ -32,7 +32,7 @@ type MessageStore interface {
 	Sent(ctx context.Context, limit, offset int) ([]Message, error)
 
 	// Next retrieves the next 2 messages to be sent
-	Next(ctx context.Context) ([]Message, error)
+	Next(ctx context.Context, limit int) ([]Message, error)
 
 	// Add adds a new message to the store
 	Add(ctx context.Context, req AddMessageRequest) error

@@ -34,7 +34,7 @@ func (s *Store) Sent(_ context.Context, _, _ int) ([]project.Message, error) {
 	return messages, nil
 }
 
-func (s *Store) Next(_ context.Context) ([]project.Message, error) {
+func (s *Store) Next(_ context.Context, limit int) ([]project.Message, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
 
@@ -49,7 +49,7 @@ func (s *Store) Next(_ context.Context) ([]project.Message, error) {
 		messages = append(messages, m)
 		count++
 
-		if count == 2 {
+		if count == limit {
 			break
 		}
 

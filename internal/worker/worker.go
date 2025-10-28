@@ -82,14 +82,16 @@ func (w *Worker) Stop() error {
 }
 
 func (w *Worker) start(ctx context.Context) {
-	if err := w.processMessages(ctx); err != nil {
+	// First we get all the unsent messages
+	if err := w.processMessages(ctx, 0); err != nil {
 		w.logger.Error("Failed to fetch and send messages", "details", err)
 	}
 
 	for {
 		select {
 		case <-w.ticker.C:
-			if err := w.processMessages(ctx); err != nil {
+			// This can be run within a goroutine but for simplicity we will keep it as is, because we have a pretty long interval between polls
+			if err := w.processMessages(ctx, 2); err != nil {
 				w.logger.Error("Failed to fetch and send messages", "details", err)
 			}
 		case <-w.stop:
@@ -105,8 +107,8 @@ func (w *Worker) start(ctx context.Context) {
 	}
 }
 
-func (w *Worker) processMessages(ctx context.Context) error {
-	messages, err := w.store.Next(ctx)
+func (w *Worker) processMessages(ctx context.Context, limit int) error {
+	messages, err := w.store.Next(ctx, limit)
 	if err != nil {
 		return ErrUnableToFetchMessages
 	}
